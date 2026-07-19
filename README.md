@@ -1,4 +1,4 @@
-# Election Data Platform
+<img width="1459" height="719" alt="Screenshot 2026-07-19 at 10 48 05 PM" src="https://github.com/user-attachments/assets/5e39c5b1-adf8-4ade-bd56-58b2cd70d995" /># Election Data Platform
 
 A three-part system for browsing and looking up election data (constituencies, polling booths,
 candidates, vote records):
@@ -163,9 +163,18 @@ Evidence that each piece actually runs:
 - **Web** — the login screen, the Overview page (stat tiles + charts), a constituency detail page
   (booth table + candidate chart), and a booth row showing the leading-candidate/party-badge
   styling.
+  <img width="1465" height="717" alt="Screenshot 2026-07-19 at 10 44 13 PM" src="https://github.com/user-attachments/assets/6b4a7ba6-8fa0-47c5-81f8-abfd08100296" />
+  <img width="1463" height="720" alt="Screenshot 2026-07-19 at 10 44 32 PM" src="https://github.com/user-attachments/assets/6ffea729-dbb3-4b8a-a04b-a1427328b4ce" />
+  <img width="1470" height="715" alt="Screenshot 2026-07-19 at 10 48 31 PM" src="https://github.com/user-attachments/assets/83d26acc-c53c-4151-9c23-49b59ef63a23" />
+
 - **Mobile** — the login screen, the search screen with results, and the booth detail screen
   showing the candidate breakdown with party badges (a party-affiliated candidate and an
   independent one).
+  <img width="772" height="1600" alt="image" src="https://github.com/user-attachments/assets/c491c087-35c8-4965-92d9-f1147d229449" />
+  <img width="764" height="1600" alt="image" src="https://github.com/user-attachments/assets/a76204d3-8797-48cb-951d-cbdd66120e28" />
+  
+<img width="754" height="1600" alt="image" src="https://github.com/user-attachments/assets/4f137b51-2c9d-4dd3-af85-f0d705f0ff13" />
+
 
 ## Trade-offs made due to time
 
