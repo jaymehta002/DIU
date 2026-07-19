@@ -1,8 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { randomUUID } from 'node:crypto';
+import { hashPassword } from '../src/services/auth.service';
 
 const prisma = new PrismaClient();
+
+const DEMO_USERS = [
+  { username: 'analyst', password: 'AnalystDemo123!' },
+  { username: 'admin', password: 'AdminDemo123!' },
+];
 
 const PARTY_POOL = [
   'National Unity Party',
@@ -36,7 +42,19 @@ async function main() {
     prisma.candidate.deleteMany(),
     prisma.booth.deleteMany(),
     prisma.constituency.deleteMany(),
+    prisma.user.deleteMany(),
   ]);
+
+  await prisma.user.createMany({
+    data: await Promise.all(
+      DEMO_USERS.map(async (demoUser) => ({
+        id: randomUUID(),
+        username: demoUser.username,
+        passwordHash: await hashPassword(demoUser.password),
+      })),
+    ),
+  });
+  console.log(`Seeded ${DEMO_USERS.length} demo user(s) — see backend/README.md for credentials.`);
 
   const constituencies = Array.from({ length: 5 }, (_, i) => ({
     id: randomUUID(),
@@ -90,15 +108,16 @@ async function main() {
     );
   }
 
-  const [constituencyCount, boothCount, candidateCount, voteRecordCount] = await Promise.all([
+  const [constituencyCount, boothCount, candidateCount, voteRecordCount, userCount] = await Promise.all([
     prisma.constituency.count(),
     prisma.booth.count(),
     prisma.candidate.count(),
     prisma.voteRecord.count(),
+    prisma.user.count(),
   ]);
 
   console.log('\nSeed complete:');
-  console.log({ constituencyCount, boothCount, candidateCount, voteRecordCount });
+  console.log({ constituencyCount, boothCount, candidateCount, voteRecordCount, userCount });
 }
 
 main()

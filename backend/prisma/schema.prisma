@@ -46,6 +46,13 @@ model Candidate {
   @@index([constituencyId])
 }
 
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
 model VoteRecord {
   id          String   @id @default(cuid())
   votes       Int

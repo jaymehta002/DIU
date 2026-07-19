@@ -9,6 +9,9 @@ const envSchema = z.object({
     .string()
     .default('http://localhost:5173,http://localhost:19006')
     .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean)),
+  JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
+  JWT_EXPIRES_IN: z.string().default('24h'),
+  MOBILE_API_KEY: z.string().min(1, 'MOBILE_API_KEY is required'),
 });
 
 function loadEnv() {

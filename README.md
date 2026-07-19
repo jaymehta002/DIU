@@ -55,8 +55,16 @@ Each subproject also has its own docs:
 
 ## Trade-offs made due to time
 
-- **No auth** — every endpoint is public; fine for a read-only demo dataset, not for real election
-  data.
+- **Web dashboard has no login screen yet** — the backend now requires auth on
+  `/api/constituencies` and `/api/booths/*` ([`backend/README.md#authentication`](backend/README.md#authentication)),
+  but `frontend-web` hasn't been updated with a login form or `credentials: 'include'` on its
+  `fetch` calls, so it currently gets `401`s until that follow-up lands.
+- **Mobile's auth is a static shared API key, not per-user** — acceptable for "is this our mobile
+  client," extractable from the installed app bundle by anyone who goes looking (documented in
+  `backend/README.md`); not a substitute for real per-device credentials at production scale.
+- **Login sessions aren't revocable server-side** — logout only clears the client cookie; the JWT
+  itself stays valid until its 24h expiry even if copied elsewhere beforehand. A blocklist or
+  refresh-token scheme would fix this.
 - **No pagination** — `GET /api/constituencies` and the booths-per-constituency endpoint return
   everything in one response. Acceptable at ~5 constituencies / ~40 booths each, would need
   cursor/offset pagination at real scale.
@@ -81,7 +89,8 @@ Each subproject also has its own docs:
 4. Share the booth-search hook (debounce constant, request logic) between `frontend-web` and
    `mobile` instead of two independent copies — they're currently kept in sync by hand (300ms vs
    350ms debounce today, functionally identical but drift-prone).
-5. Basic auth/rate-limiting on the API before it could be anything other than an internal demo.
+5. Wire the web dashboard's login screen up to the now-existing auth endpoints (see trade-offs
+   above) — this is the main gap left from the auth work.
 6. Replace the raw `ILIKE` booth search with proper full-text search and relevance ranking.
 
 ## Quick reference: running everything

@@ -1,11 +1,16 @@
 import type { ApiErrorEnvelope, ApiSuccessEnvelope } from '../types/api';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_KEY = process.env.EXPO_PUBLIC_MOBILE_API_KEY;
 
 if (!API_URL) {
   throw new Error(
     'EXPO_PUBLIC_API_URL is not set. Copy .env.example to .env and set it to your backend\'s LAN IP.',
   );
+}
+
+if (!API_KEY) {
+  throw new Error('EXPO_PUBLIC_MOBILE_API_KEY is not set. Copy .env.example to .env and set it.');
 }
 
 export class ApiRequestError extends Error {
@@ -38,7 +43,7 @@ export async function apiRequest<T>(path: string, searchParams?: Record<string, 
 
   let response: Response;
   try {
-    response = await fetch(url.toString());
+    response = await fetch(url.toString(), { headers: { 'X-API-Key': API_KEY } });
   } catch {
     throw new ApiRequestError(
       'Unable to reach the server. Check the LAN IP in .env and your network connection.',
