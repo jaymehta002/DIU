@@ -11,28 +11,13 @@
   --error-border: #f3c1bd;
 
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121317;
-    --surface: #1b1c21;
-    --surface-alt: #24252b;
-    --border: #2d2e35;
-    --text: #e7e7ea;
-    --text-muted: #9a9aa5;
-    --accent: #7c93ff;
-    --error-bg: #3a1f1f;
-    --error-text: #ff9d95;
-    --error-border: #5c2b28;
-  }
 }
 
 * {

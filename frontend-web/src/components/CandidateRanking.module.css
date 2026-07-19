@@ -1,0 +1,45 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item,
+.leading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.leading {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.rank {
+  min-width: 5.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.leading .rank {
+  color: var(--accent);
+}
+
+.name {
+  flex: 1;
+}
+
+.party {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.votes {
+  font-variant-numeric: tabular-nums;
+}

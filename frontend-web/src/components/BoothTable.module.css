@@ -56,3 +56,27 @@
   cursor: pointer;
   padding: 0;
 }
+
+.row {
+  cursor: pointer;
+}
+
+.expandCell {
+  width: 1%;
+}
+
+.expandButton {
+  background: none;
+  border: none;
+  font: inherit;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  width: 1.25rem;
+}
+
+.detailRow td {
+  background: var(--surface-alt);
+  white-space: normal;
+  padding: 0.75rem 0.85rem 0.9rem 2.25rem;
+}

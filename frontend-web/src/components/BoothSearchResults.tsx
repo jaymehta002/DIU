@@ -5,9 +5,11 @@ import styles from './BoothSearchResults.module.css';
 interface BoothSearchResultsProps {
   results: BoothSearchResult[];
   query: string;
+  selectedBoothId: string | null;
+  onSelect: (boothId: string) => void;
 }
 
-export function BoothSearchResults({ results, query }: BoothSearchResultsProps) {
+export function BoothSearchResults({ results, query, selectedBoothId, onSelect }: BoothSearchResultsProps) {
   if (query.trim() === '') {
     return null;
   }
@@ -19,11 +21,18 @@ export function BoothSearchResults({ results, query }: BoothSearchResultsProps) 
   return (
     <ul className={styles.list}>
       {results.map((booth) => (
-        <li key={booth.id} className={styles.item}>
-          <span className={styles.name}>{booth.name}</span>
-          <span className={styles.meta}>
-            Booth #{booth.number} · {booth.location} · {booth.constituency.name}
-          </span>
+        <li key={booth.id}>
+          <button
+            type="button"
+            className={`${styles.item} ${booth.id === selectedBoothId ? styles.itemSelected : ''}`}
+            onClick={() => onSelect(booth.id)}
+            aria-pressed={booth.id === selectedBoothId}
+          >
+            <span className={styles.name}>{booth.name}</span>
+            <span className={styles.meta}>
+              Booth #{booth.number} · {booth.location} · {booth.constituency.name}
+            </span>
+          </button>
         </li>
       ))}
     </ul>

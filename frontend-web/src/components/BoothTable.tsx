@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import type { Booth } from '../types/booth';
+import { CandidateRanking } from './CandidateRanking';
 import { EmptyState } from './EmptyState';
 import styles from './BoothTable.module.css';
 
@@ -33,6 +34,8 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: 'leadingCandidate', label: 'Leading Candidate' },
 ];
 
+const TOTAL_COLUMN_COUNT = COLUMNS.length + 1; // + the expand-toggle column
+
 function getSortValue(booth: Booth, key: SortKey): string | number {
   switch (key) {
     case 'number':
@@ -55,6 +58,7 @@ function getSortValue(booth: Booth, key: SortKey): string | number {
 export function BoothTable({ booths }: BoothTableProps) {
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState<SortState>({ key: 'number', direction: 'asc' });
+  const [expandedBoothId, setExpandedBoothId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const term = filter.trim().toLowerCase();
@@ -88,6 +92,10 @@ export function BoothTable({ booths }: BoothTableProps) {
     );
   }
 
+  function toggleExpanded(boothId: string) {
+    setExpandedBoothId((prev) => (prev === boothId ? null : boothId));
+  }
+
   return (
     <div className={styles.wrapper}>
       <input
@@ -108,6 +116,7 @@ export function BoothTable({ booths }: BoothTableProps) {
           <table className={styles.table}>
             <thead>
               <tr>
+                <th aria-hidden="true" />
                 {COLUMNS.map((column) => (
                   <th key={column.key}>
                     <button type="button" className={styles.sortButton} onClick={() => toggleSort(column.key)}>
@@ -119,20 +128,50 @@ export function BoothTable({ booths }: BoothTableProps) {
               </tr>
             </thead>
             <tbody>
-              {sorted.map((booth) => (
-                <tr key={booth.id}>
-                  <td>{booth.number}</td>
-                  <td>{booth.name}</td>
-                  <td>{booth.location}</td>
-                  <td>{booth.registeredVoters.toLocaleString()}</td>
-                  <td>{booth.totalVotesCast.toLocaleString()}</td>
-                  <td>{booth.turnoutPercentage}%</td>
-                  <td>
-                    {booth.leadingCandidate.name} ({booth.leadingCandidate.party}) —{' '}
-                    {booth.leadingCandidate.votes.toLocaleString()}
-                  </td>
-                </tr>
-              ))}
+              {sorted.map((booth) => {
+                const isExpanded = expandedBoothId === booth.id;
+
+                return (
+                  <Fragment key={booth.id}>
+                    <tr
+                      className={styles.row}
+                      onClick={() => toggleExpanded(booth.id)}
+                      aria-expanded={isExpanded}
+                    >
+                      <td className={styles.expandCell}>
+                        <button
+                          type="button"
+                          className={styles.expandButton}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleExpanded(booth.id);
+                          }}
+                          aria-label={isExpanded ? 'Collapse candidate breakdown' : 'Expand candidate breakdown'}
+                        >
+                          {isExpanded ? '▾' : '▸'}
+                        </button>
+                      </td>
+                      <td>{booth.number}</td>
+                      <td>{booth.name}</td>
+                      <td>{booth.location}</td>
+                      <td>{booth.registeredVoters.toLocaleString()}</td>
+                      <td>{booth.totalVotesCast.toLocaleString()}</td>
+                      <td>{booth.turnoutPercentage}%</td>
+                      <td>
+                        {booth.leadingCandidate.name} ({booth.leadingCandidate.party}) —{' '}
+                        {booth.leadingCandidate.votes.toLocaleString()}
+                      </td>
+                    </tr>
+                    {isExpanded && (
+                      <tr className={styles.detailRow}>
+                        <td colSpan={TOTAL_COLUMN_COUNT}>
+                          <CandidateRanking candidates={booth.candidates} />
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
