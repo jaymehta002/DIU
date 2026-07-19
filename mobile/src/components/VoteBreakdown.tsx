@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { Booth } from '../types/booth';
+import { PartyBadge } from './PartyBadge';
+import { colors, fontSize, fontWeight, letterSpacing, radius, spacing } from '../theme';
+import { formatNumber } from '../utils/format';
 
 interface VoteBreakdownProps {
   booth: Booth;
@@ -18,16 +21,14 @@ export function VoteBreakdown({ booth }: VoteBreakdownProps) {
               <View style={styles.nameLine}>
                 <Text style={[styles.name, isLeading && styles.leadingText]}>{candidate.name}</Text>
                 {isLeading && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>LEADING</Text>
+                  <View style={styles.leadingTag}>
+                    <Text style={styles.leadingTagText}>LEADING</Text>
                   </View>
                 )}
               </View>
-              <Text style={styles.party}>{candidate.party}</Text>
+              <PartyBadge party={candidate.party} />
             </View>
-            <Text style={[styles.votes, isLeading && styles.leadingText]}>
-              {candidate.votes.toLocaleString()}
-            </Text>
+            <Text style={[styles.votes, isLeading && styles.leadingText]}>{formatNumber(candidate.votes)}</Text>
           </View>
         );
       })}
@@ -37,58 +38,54 @@ export function VoteBreakdown({ booth }: VoteBreakdownProps) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: spacing.sm,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 8,
+    padding: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#e0e1e6',
-    backgroundColor: '#ffffff',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   leadingRow: {
-    borderColor: '#3457d5',
-    backgroundColor: '#eef1fc',
+    borderColor: colors.accent,
+    backgroundColor: colors.accentSoft,
   },
   rowText: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs,
   },
   nameLine: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.sm,
   },
   name: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1c1d21',
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
   },
   leadingText: {
-    color: '#3457d5',
-  },
-  party: {
-    fontSize: 13,
-    color: '#6b6c76',
+    color: colors.accent,
   },
   votes: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1c1d21',
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
   },
-  badge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    backgroundColor: '#3457d5',
+  leadingTag: {
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm,
+    backgroundColor: colors.accent,
   },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#ffffff',
-    letterSpacing: 0.5,
+  leadingTagText: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.bold,
+    color: colors.onAccent,
+    letterSpacing: letterSpacing.wide,
   },
 });

@@ -1,9 +1,11 @@
 # Web dashboard
 
-Vite + React + TypeScript + recharts. Read-only analytics view for browsing election results:
-search a booth by name/number, or pick a constituency to see its booth-wise table and a
-candidate-votes chart. Pure API consumer — every number on this page comes from the backend at
-render time, there is no mocked/hardcoded election data in this project.
+Vite + React + TypeScript + React Router + recharts. Read-only analytics dashboard for an
+election-analytics team: an Overview page (cross-constituency totals, turnout comparison, a
+national candidate leaderboard) plus a per-constituency detail page (candidate-votes chart,
+turnout-distribution chart, sortable/paginated booth table), with a global booth search reachable
+from every page. Pure API consumer — every number on this page comes from the backend at render
+time, there is no mocked/hardcoded election data in this project.
 
 ## Setup
 
@@ -37,23 +39,39 @@ for the full design rationale. Demo credentials (seeded by `backend/prisma/seed.
 
 The session is an httpOnly cookie set by `POST /api/auth/login` — every `fetch` in `src/api/client.ts`
 sends `credentials: 'include'` so it's attached automatically. Use the "Sign out" button in the
-dashboard header to clear it (`POST /api/auth/logout`).
+sidebar to clear it (`POST /api/auth/logout`).
+
+## Routes
+
+- `/login` — public; redirects to `/` if already authenticated
+- `/` — Overview: stat tiles + national candidate leaderboard + turnout-by-constituency chart
+- `/constituency/:id` — candidate-votes chart, turnout-distribution chart, booth table
+
+Both authenticated routes render inside a shared `Layout` (persistent sidebar: nav, global booth
+search, constituency list, sign-out). A `ProtectedRoute` reads auth status from context: `loading`
+shows a full-page spinner (no flash of the dashboard before redirecting), `unauthenticated`
+redirects to `/login`, `authenticated` renders the route.
 
 ## Project structure
 
+- `src/auth/` — the entire auth concern in one module: `api.ts` (login/logout/me calls),
+  `AuthProvider.tsx` + `authContext.ts` (checks `GET /api/auth/me` on load, exposes login/logout),
+  `useAuth.ts`, `ProtectedRoute.tsx`, and `types.ts` (`AuthUser`) — nothing outside this folder
+  touches auth state or the session cookie directly
 - `src/api/` — typed fetch client (`client.ts`, sends cookies + supports POST/JSON bodies) + one
-  function per endpoint used here, including `auth.ts`
-- `src/context/` — `AuthProvider` (checks `GET /api/auth/me` on load, exposes login/logout) +
-  the underlying `AuthContext`
-- `src/types/` — `Booth`, `Candidate`, etc., mirrored exactly from `backend/API.md` and
+  function per endpoint used here
+- `src/types/` — `Booth`, `Candidate`, `Overview`, etc., mirrored exactly from `backend/API.md` and
   `mobile/src/types/` — do not let these drift
-- `src/hooks/` — `useConstituencies`, `useConstituencyBooths`, `useBoothSearch`, `useAuth`, wrapping
-  `api/` with loading/error state
-- `src/components/` — `LoginForm`, `ConstituencySelector`, `BoothTable` (sortable + filterable),
-  `CandidateVotesChart` (recharts bar chart), `SearchBar`, `BoothSearchResults`, `BoothDetailPanel`,
-  and shared `LoadingState`/`ErrorState`/`EmptyState`
-- `App.tsx` — gates on auth status: loading spinner, `LoginForm`, or `Dashboard`
-- `Dashboard.tsx` — top-level authenticated layout composing the above
+- `src/hooks/` — `useConstituencies`, `useConstituencyBooths`, `useBoothSearch`, `useOverview`,
+  wrapping `api/` with loading/error state
+- `src/pages/` — `LoginPage`, `OverviewPage`, `ConstituencyDetailPage` — one per route
+- `src/components/` — `Layout`/`Sidebar` (persistent shell), `BoothTable` (sortable, filterable,
+  paginated, leading-candidate row highlighted), `CandidateVotesChart`/`TurnoutHistogram`/
+  `CandidateLeaderboardChart`/`ConstituencyComparisonChart` (recharts, each with its own
+  `ChartLegend` + custom tooltip content), `LoginForm`, `SearchBar`, `BoothSearchResults`,
+  `BoothDetailPanel`, `StatTile`, and shared `LoadingState`/`ErrorState`/`EmptyState`
+- `App.tsx` — `BrowserRouter` + route table wiring `AuthProvider`, `ProtectedRoute`, `Layout`, and
+  the three pages together
 
 ## Build
 

@@ -5,9 +5,11 @@ import { LoadingState } from '../components/LoadingState';
 import { ErrorState } from '../components/ErrorState';
 import { VoteBreakdown } from '../components/VoteBreakdown';
 import { useBoothDetail } from '../hooks/useBoothDetail';
-import type { RootStackParamList } from '../navigation/types';
+import type { AppStackParamList } from '../navigation/types';
+import { colors, fontSize, fontWeight, radius, spacing } from '../theme';
+import { formatNumber } from '../utils/format';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'BoothDetail'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'BoothDetail'>;
 
 export function BoothDetailScreen({ route }: Props) {
   const { boothId } = route.params;
@@ -48,11 +50,11 @@ export function BoothDetailScreen({ route }: Props) {
 
         <View style={styles.statsRow}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{booth.registeredVoters.toLocaleString()}</Text>
+            <Text style={styles.statValue}>{formatNumber(booth.registeredVoters)}</Text>
             <Text style={styles.statLabel}>Registered Voters</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{booth.totalVotesCast.toLocaleString()}</Text>
+            <Text style={styles.statValue}>{formatNumber(booth.totalVotesCast)}</Text>
             <Text style={styles.statLabel}>Votes Cast</Text>
           </View>
           <View style={styles.stat}>
@@ -71,64 +73,64 @@ export function BoothDetailScreen({ route }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f6f8',
+    backgroundColor: colors.bg,
   },
   container: {
     flex: 1,
   },
   content: {
-    padding: 16,
-    gap: 20,
+    padding: spacing.lg,
+    gap: spacing.xl,
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#f5f6f8',
+    backgroundColor: colors.bg,
   },
   errorWrapper: {
-    padding: 16,
+    padding: spacing.lg,
   },
   header: {
-    gap: 4,
+    gap: spacing.xs,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1c1d21',
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#6b6c76',
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
   },
   location: {
-    fontSize: 13,
-    color: '#9a9aa5',
+    fontSize: fontSize.sm,
+    color: colors.textMuted,
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: '#e0e1e6',
-    padding: 16,
+    borderColor: colors.border,
+    padding: spacing.lg,
   },
   stat: {
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   statValue: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1c1d21',
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#6b6c76',
+    fontSize: fontSize.xs,
+    color: colors.textMuted,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1c1d21',
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
   },
 });

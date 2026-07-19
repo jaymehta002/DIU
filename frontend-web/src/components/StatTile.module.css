@@ -1,0 +1,26 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.value {
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.value.accent {
+  color: var(--accent);
+}
+
+.label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

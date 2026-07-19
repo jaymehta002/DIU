@@ -16,7 +16,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 
   const token = signToken({ sub: user.id, username: user.username });
   res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions());
-  res.json({ data: { id: user.id, username: user.username } });
+  res.json({ data: { id: user.id, username: user.username, token } });
 });
 
 export const logout = catchAsync(async (_req: Request, res: Response) => {

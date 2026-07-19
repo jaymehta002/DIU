@@ -1,17 +1,7 @@
 import type { ApiErrorEnvelope, ApiSuccessEnvelope } from '../types/api';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-const API_KEY = process.env.EXPO_PUBLIC_MOBILE_API_KEY;
-
-if (!API_URL) {
-  throw new Error(
-    'EXPO_PUBLIC_API_URL is not set. Copy .env.example to .env and set it to your backend\'s LAN IP.',
-  );
-}
-
-if (!API_KEY) {
-  throw new Error('EXPO_PUBLIC_MOBILE_API_KEY is not set. Copy .env.example to .env and set it.');
-}
+import { API_URL } from './config';
+import { getToken, clearToken } from '../auth/tokenStorage';
+import { notifyUnauthorized } from '../auth/authEvents';
 
 export class ApiRequestError extends Error {
   readonly code: string;
@@ -41,15 +31,25 @@ export async function apiRequest<T>(path: string, searchParams?: Record<string, 
     }
   }
 
+  const token = await getToken();
+
   let response: Response;
   try {
-    response = await fetch(url.toString(), { headers: { 'X-API-Key': API_KEY } });
+    response = await fetch(url.toString(), {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
   } catch {
     throw new ApiRequestError(
       'Unable to reach the server. Check the LAN IP in .env and your network connection.',
       'NETWORK_ERROR',
       0,
     );
+  }
+
+  if (response.status === 401) {
+    await clearToken();
+    notifyUnauthorized();
+    throw new ApiRequestError('Session expired.', 'UNAUTHORIZED', 401);
   }
 
   let body: unknown;

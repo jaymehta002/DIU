@@ -6,6 +6,7 @@ import {
   pickLeadingCandidate,
   sumVotes,
   type CandidateVoteTally,
+  type PartyInfo,
 } from '../utils/turnout';
 
 const boothWithVotesSelect = {
@@ -17,7 +18,13 @@ const boothWithVotesSelect = {
   voteRecords: {
     select: {
       votes: true,
-      candidate: { select: { id: true, name: true, party: true } },
+      candidate: {
+        select: {
+          id: true,
+          name: true,
+          party: { select: { id: true, name: true, symbol: true, color: true } },
+        },
+      },
     },
   },
 } as const;
@@ -28,7 +35,7 @@ interface BoothWithVotes {
   number: number;
   location: string;
   registeredVoters: number;
-  voteRecords: { votes: number; candidate: { id: string; name: string; party: string } }[];
+  voteRecords: { votes: number; candidate: { id: string; name: string; party: PartyInfo | null } }[];
 }
 
 function shapeBooth(booth: BoothWithVotes) {

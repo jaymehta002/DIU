@@ -1,7 +1,14 @@
+export interface PartyInfo {
+  id: string;
+  name: string;
+  symbol: string;
+  color: string;
+}
+
 export interface CandidateVoteTally {
   id: string;
   name: string;
-  party: string;
+  party: PartyInfo | null;
   votes: number;
 }
 

@@ -1,2 +1,15 @@
 .DS_Store
 *.log
+
+node_modules/
+dist/
+build/
+coverage/
+
+.expo/
+.expo-shared/
+
+.env
+!.env.example
+
+.claude/

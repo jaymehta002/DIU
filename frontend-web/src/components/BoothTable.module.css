@@ -16,27 +16,34 @@
 }
 
 .tableScroll {
-  overflow-x: auto;
+  overflow: auto;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
+  max-height: 640px;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
-  white-space: nowrap;
+  font-size: 0.85rem;
+  table-layout: fixed;
 }
 
 .table th,
 .table td {
-  padding: 0.6rem 0.85rem;
+  padding: 0.55rem 0.85rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.table thead {
+.table thead th {
+  position: sticky;
+  top: 0;
   background: var(--surface-alt);
+  z-index: 1;
 }
 
 .table tbody tr:last-child td {
@@ -45,6 +52,11 @@
 
 .table tbody tr:hover {
   background: var(--surface-alt);
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 .sortButton {
@@ -65,6 +77,37 @@
   width: 1%;
 }
 
+.colExpand {
+  width: 32px;
+}
+
+.colNumber {
+  width: 44px;
+}
+
+.colName {
+  width: 24%;
+}
+
+.colLocation {
+  width: 20%;
+}
+
+.colNumeric {
+  width: 90px;
+}
+
+.colLeading {
+  width: 190px;
+}
+
+.nameCell,
+.locationCell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .expandButton {
   background: none;
   border: none;
@@ -79,4 +122,57 @@
   background: var(--surface-alt);
   white-space: normal;
   padding: 0.75rem 0.85rem 0.9rem 2.25rem;
+}
+
+.leadingCell {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+}
+
+.leadingBadge {
+  font-weight: 600;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leadingVotes {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.pageStatus {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.pageButton {
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: var(--surface-alt);
+}
+
+.pageButton:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
 }

@@ -33,17 +33,29 @@ model Booth {
   @@index([constituencyId])
 }
 
+model Party {
+  id        String   @id @default(cuid())
+  name      String
+  symbol    String
+  color     String
+  createdAt DateTime @default(now())
+
+  candidates Candidate[]
+}
+
 model Candidate {
   id             String   @id @default(cuid())
   name           String
-  party          String
+  partyId        String?
   constituencyId String
   createdAt      DateTime @default(now())
 
   constituency Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
+  party        Party?       @relation(fields: [partyId], references: [id], onDelete: SetNull)
   voteRecords  VoteRecord[]
 
   @@index([constituencyId])
+  @@index([partyId])
 }
 
 model User {

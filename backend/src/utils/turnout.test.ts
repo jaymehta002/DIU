@@ -18,8 +18,8 @@ describe('computeTurnoutPercentage', () => {
 describe('sumVotes', () => {
   it('sums votes across candidates', () => {
     const candidates = [
-      { id: 'a', name: 'A', party: 'X', votes: 100 },
-      { id: 'b', name: 'B', party: 'Y', votes: 50 },
+      { id: 'a', name: 'A', party: null, votes: 100 },
+      { id: 'b', name: 'B', party: null, votes: 50 },
     ];
     expect(sumVotes(candidates)).toBe(150);
   });
@@ -32,23 +32,23 @@ describe('sumVotes', () => {
 describe('pickLeadingCandidate', () => {
   it('picks the candidate with the most votes', () => {
     const candidates = [
-      { id: 'a', name: 'A', party: 'X', votes: 100 },
-      { id: 'b', name: 'B', party: 'Y', votes: 250 },
-      { id: 'c', name: 'C', party: 'Z', votes: 50 },
+      { id: 'a', name: 'A', party: null, votes: 100 },
+      { id: 'b', name: 'B', party: null, votes: 250 },
+      { id: 'c', name: 'C', party: null, votes: 50 },
     ];
     expect(pickLeadingCandidate(candidates).id).toBe('b');
   });
 
   it('breaks ties deterministically by lowest candidate id', () => {
     const candidates = [
-      { id: 'zzz', name: 'A', party: 'X', votes: 100 },
-      { id: 'aaa', name: 'B', party: 'Y', votes: 100 },
+      { id: 'zzz', name: 'A', party: null, votes: 100 },
+      { id: 'aaa', name: 'B', party: null, votes: 100 },
     ];
     expect(pickLeadingCandidate(candidates).id).toBe('aaa');
   });
 
   it('returns the only candidate in a single-candidate race', () => {
-    const candidates = [{ id: 'solo', name: 'Solo', party: 'X', votes: 42 }];
+    const candidates = [{ id: 'solo', name: 'Solo', party: null, votes: 42 }];
     expect(pickLeadingCandidate(candidates).id).toBe('solo');
   });
 });

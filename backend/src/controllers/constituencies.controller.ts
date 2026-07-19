@@ -13,3 +13,9 @@ export const listBoothsForConstituency = catchAsync(async (req: Request, res: Re
   const result = await boothsService.listBoothsByConstituency(id);
   res.json({ data: result });
 });
+
+export const getConstituencyWinner = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.validatedParams as { id: string };
+  const result = await constituenciesService.getConstituencyWinner(id);
+  res.json({ data: result });
+});

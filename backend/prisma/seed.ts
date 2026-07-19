@@ -11,15 +11,112 @@ const DEMO_USERS = [
   { username: 'user01@gmail.com', password: 'User01@123' },
 ];
 
-const PARTY_POOL = [
-  'National Unity Party',
-  "People's Progressive Front",
-  'Democratic Alliance',
-  'Green Future Party',
-  'Citizens Congress',
-  'Freedom Coalition',
-  'Workers Solidarity Party',
-  'Reform Movement',
+interface PartySeed {
+  name: string;
+  symbol: string;
+  color: string;
+  weight: number;
+}
+
+const PARTY_SEED_POOL: PartySeed[] = [
+  { name: 'Bharat Nirman Morcha', symbol: 'BNM', color: '#2a78d6', weight: 5 },
+  { name: 'Jan Shakti Dal', symbol: 'JSD', color: '#008300', weight: 4 },
+  { name: 'Lok Kalyan Party', symbol: 'LKP', color: '#e87ba4', weight: 3 },
+  { name: 'Samagra Vikas Manch', symbol: 'SVM', color: '#eda100', weight: 2 },
+  { name: 'Rashtriya Ekta Front', symbol: 'REF', color: '#1baf7a', weight: 2 },
+  { name: 'Nav Bharat Sena', symbol: 'NBS', color: '#eb6834', weight: 1 },
+];
+
+const CANDIDATE_NAME_POOL = [
+  'Priya Deshmukh',
+  'Mohammed Rizwan Sheikh',
+  'Kavita Reddy',
+  'Harpreet Singh Gill',
+  'Arjun Iyer',
+  'Sunita Yadav',
+  'Vikram Chauhan',
+  'Fatima Bano',
+  'Ramesh Naidu',
+  'Anjali Kulkarni',
+  'Suresh Pillai',
+  'Meenakshi Subramaniam',
+  'Rajesh Khatri',
+  'Nasreen Ansari',
+  'Gurpreet Kaur',
+  'Deepak Bhatt',
+  'Lakshmi Venkataraman',
+  'Imran Qureshi',
+  'Sneha Joshi',
+  'Ashok Gowda',
+  'Karthik Rajan',
+  'Poonam Chowdhury',
+  'Aslam Khan',
+  'Radha Krishnan',
+  'Nitin Wagh',
+  'Zainab Sayyed',
+  'Baljeet Singh',
+  'Divya Menon',
+  'Ganesh Pawar',
+  'Yasmin Mirza',
+  'Ravindra Patil',
+  'Chitra Balasubramanian',
+  'Manpreet Kaur',
+  'Abdul Wahab',
+  'Shalini Nair',
+  'Dinesh Solanki',
+  'Rekha Mahajan',
+  'Faisal Ahmed',
+  'Geeta Shinde',
+];
+
+const BOOTH_PREFIXES = [
+  'Govt. Primary School',
+  'Zilla Parishad High School',
+  'Municipal Corporation School',
+  'Govt. Higher Secondary School',
+  'Panchayat Union Middle School',
+  'Govt. Girls High School',
+  'Community Hall',
+];
+
+interface ConstituencySeed {
+  name: string;
+  code: string;
+  district: string;
+  areas: string[];
+}
+
+const CONSTITUENCY_POOL: ConstituencySeed[] = [
+  {
+    name: 'Baramati',
+    code: 'AC-01',
+    district: 'Pune, Maharashtra',
+    areas: ['Katraj', 'Loni Kalbhor', 'Malegaon', 'Indapur Road', 'Someshwarwadi', 'Vidya Nagar'],
+  },
+  {
+    name: 'Chandni Chowk',
+    code: 'AC-02',
+    district: 'Central Delhi',
+    areas: ['Karol Bagh', 'Sadar Bazaar', 'Kamla Nagar', 'Sabzi Mandi', 'Daryaganj', 'Paharganj'],
+  },
+  {
+    name: 'Nagpur South',
+    code: 'AC-03',
+    district: 'Nagpur, Maharashtra',
+    areas: ['Dharampeth', 'Sitabuldi', 'Manewada', 'Wardha Road', 'Trimurti Nagar', 'Hingna'],
+  },
+  {
+    name: 'Yeshwanthpur',
+    code: 'AC-04',
+    district: 'Bengaluru, Karnataka',
+    areas: ['Rajajinagar', 'Peenya', 'Malleshwaram', 'Jalahalli', 'Nandini Layout', 'Laggere'],
+  },
+  {
+    name: 'Sivaganga',
+    code: 'AC-05',
+    district: 'Sivaganga, Tamil Nadu',
+    areas: ['Karaikudi', 'Manamadurai', 'Devakottai', 'Ilayangudi', 'Tirupathur', 'Kalayarkoil'],
+  },
 ];
 
 /**
@@ -37,10 +134,21 @@ function distributeVotes(candidateCount: number, totalVotes: number): number[] {
   return weights.map((w) => Math.max(1, Math.round((w / weightSum) * totalVotes)));
 }
 
+function pickWeightedPartyId(parties: { id: string; weight: number }[]): string {
+  const totalWeight = parties.reduce((sum, party) => sum + party.weight, 0);
+  let roll = faker.number.float({ min: 0, max: totalWeight });
+  for (const party of parties) {
+    if (roll < party.weight) return party.id;
+    roll -= party.weight;
+  }
+  return parties[parties.length - 1].id;
+}
+
 async function main() {
   await prisma.$transaction([
     prisma.voteRecord.deleteMany(),
     prisma.candidate.deleteMany(),
+    prisma.party.deleteMany(),
     prisma.booth.deleteMany(),
     prisma.constituency.deleteMany(),
     prisma.user.deleteMany(),
@@ -57,20 +165,34 @@ async function main() {
   });
   console.log(`Seeded ${DEMO_USERS.length} demo user(s) — see backend/README.md for credentials.`);
 
-  const constituencies = Array.from({ length: 5 }, (_, i) => ({
+  const parties = PARTY_SEED_POOL.map((seed) => ({
     id: randomUUID(),
-    name: `${faker.location.county()} Constituency`,
-    code: `PC-${String(i + 1).padStart(2, '0')}`,
+    name: seed.name,
+    symbol: seed.symbol,
+    color: seed.color,
+    weight: seed.weight,
+  }));
+  await prisma.party.createMany({
+    data: parties.map(({ weight: _weight, ...party }) => party),
+  });
+  console.log(`Seeded ${parties.length} parties.`);
+
+  const constituencies = CONSTITUENCY_POOL.map((seed) => ({
+    id: randomUUID(),
+    name: seed.name,
+    code: seed.code,
   }));
   await prisma.constituency.createMany({ data: constituencies });
 
-  for (const constituency of constituencies) {
+  for (const [index, constituency] of constituencies.entries()) {
+    const seed = CONSTITUENCY_POOL[index];
     const candidateCount = faker.number.int({ min: 3, max: 4 });
-    const parties = faker.helpers.arrayElements(PARTY_POOL, candidateCount);
+    const independentIndex = faker.number.int({ min: 0, max: candidateCount - 1 });
+    const names = faker.helpers.arrayElements(CANDIDATE_NAME_POOL, candidateCount);
     const candidates = Array.from({ length: candidateCount }, (_, i) => ({
       id: randomUUID(),
-      name: faker.person.fullName(),
-      party: parties[i],
+      name: names[i],
+      partyId: i === independentIndex ? null : pickWeightedPartyId(parties),
       constituencyId: constituency.id,
     }));
     await prisma.candidate.createMany({ data: candidates });
@@ -79,11 +201,13 @@ async function main() {
     const boothPlans = Array.from({ length: boothCount }, (_, i) => {
       const totalVotesCast = faker.number.int({ min: 800, max: 2000 });
       const turnoutRatio = faker.number.float({ min: 0.6, max: 0.9 });
+      const prefix = faker.helpers.arrayElement(BOOTH_PREFIXES);
+      const area = faker.helpers.arrayElement(seed.areas);
       return {
         id: randomUUID(),
-        name: `${faker.location.street()} Polling Station`,
+        name: `${prefix}, ${area}, Booth No. ${i + 1}`,
         number: i + 1,
-        location: `${faker.location.streetAddress()}, ${faker.location.city()}`,
+        location: `${area}, ${seed.district}`,
         registeredVoters: Math.round(totalVotesCast / turnoutRatio),
         constituencyId: constituency.id,
         totalVotesCast,
@@ -104,21 +228,26 @@ async function main() {
     });
     await prisma.voteRecord.createMany({ data: voteRecords });
 
+    const independentCount = candidates.filter((c) => c.partyId === null).length;
     console.log(
-      `Seeded ${constituency.name}: ${boothPlans.length} booths, ${candidates.length} candidates, ${voteRecords.length} vote records`,
+      `Seeded ${constituency.name}: ${boothPlans.length} booths, ${candidates.length} candidates ` +
+        `(${independentCount} independent), ${voteRecords.length} vote records`,
     );
   }
 
-  const [constituencyCount, boothCount, candidateCount, voteRecordCount, userCount] = await Promise.all([
-    prisma.constituency.count(),
-    prisma.booth.count(),
-    prisma.candidate.count(),
-    prisma.voteRecord.count(),
-    prisma.user.count(),
-  ]);
+  const [constituencyCount, boothCount, candidateCount, independentCount, voteRecordCount, userCount, partyCount] =
+    await Promise.all([
+      prisma.constituency.count(),
+      prisma.booth.count(),
+      prisma.candidate.count(),
+      prisma.candidate.count({ where: { partyId: null } }),
+      prisma.voteRecord.count(),
+      prisma.user.count(),
+      prisma.party.count(),
+    ]);
 
   console.log('\nSeed complete:');
-  console.log({ constituencyCount, boothCount, candidateCount, voteRecordCount, userCount });
+  console.log({ constituencyCount, boothCount, candidateCount, independentCount, voteRecordCount, userCount, partyCount });
 }
 
 main()

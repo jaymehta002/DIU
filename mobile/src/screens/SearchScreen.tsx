@@ -7,9 +7,10 @@ import { LoadingState } from '../components/LoadingState';
 import { ErrorState } from '../components/ErrorState';
 import { EmptyState } from '../components/EmptyState';
 import { useBoothSearch } from '../hooks/useBoothSearch';
-import type { RootStackParamList } from '../navigation/types';
+import type { AppStackParamList } from '../navigation/types';
+import { colors, spacing } from '../theme';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Search'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'Search'>;
 
 export function SearchScreen({ navigation }: Props) {
   const { query, setQuery, results, loading, error } = useBoothSearch();
@@ -52,14 +53,14 @@ export function SearchScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f6f8',
+    backgroundColor: colors.bg,
   },
   container: {
     flex: 1,
-    padding: 16,
-    gap: 12,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   list: {
-    gap: 8,
+    gap: spacing.sm,
   },
 });

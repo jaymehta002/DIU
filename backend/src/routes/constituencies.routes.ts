@@ -12,3 +12,9 @@ constituenciesRouter.get(
   validate({ params: constituencyIdParamSchema }),
   constituenciesController.listBoothsForConstituency,
 );
+
+constituenciesRouter.get(
+  '/:id/winner',
+  validate({ params: constituencyIdParamSchema }),
+  constituenciesController.getConstituencyWinner,
+);

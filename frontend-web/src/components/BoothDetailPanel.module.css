@@ -66,6 +66,7 @@
 .statValue {
   font-size: 1.05rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .statLabel {

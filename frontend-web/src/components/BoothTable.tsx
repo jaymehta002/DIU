@@ -2,6 +2,8 @@ import { Fragment, useMemo, useState } from 'react';
 import type { Booth } from '../types/booth';
 import { CandidateRanking } from './CandidateRanking';
 import { EmptyState } from './EmptyState';
+import { partyLabel } from '../utils/party';
+import { formatNumber } from '../utils/format';
 import styles from './BoothTable.module.css';
 
 interface BoothTableProps {
@@ -35,6 +37,7 @@ const COLUMNS: { key: SortKey; label: string }[] = [
 ];
 
 const TOTAL_COLUMN_COUNT = COLUMNS.length + 1; // + the expand-toggle column
+const PAGE_SIZE = 15;
 
 function getSortValue(booth: Booth, key: SortKey): string | number {
   switch (key) {
@@ -59,6 +62,7 @@ export function BoothTable({ booths }: BoothTableProps) {
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState<SortState>({ key: 'number', direction: 'asc' });
   const [expandedBoothId, setExpandedBoothId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     const term = filter.trim().toLowerCase();
@@ -86,6 +90,20 @@ export function BoothTable({ booths }: BoothTableProps) {
     return copy;
   }, [filtered, sort]);
 
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+
+  const resetKey = `${filter}|${sort.key}|${sort.direction}`;
+  const [lastResetKey, setLastResetKey] = useState(resetKey);
+  if (resetKey !== lastResetKey) {
+    setLastResetKey(resetKey);
+    setPage(1);
+  }
+
+  const paginated = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return sorted.slice(start, start + PAGE_SIZE);
+  }, [sorted, page]);
+
   function toggleSort(key: SortKey) {
     setSort((prev) =>
       prev.key === key ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' } : { key, direction: 'asc' },
@@ -112,69 +130,109 @@ export function BoothTable({ booths }: BoothTableProps) {
           message={booths.length === 0 ? 'This constituency has no booths.' : 'No booths match your filter.'}
         />
       ) : (
-        <div className={styles.tableScroll}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th aria-hidden="true" />
-                {COLUMNS.map((column) => (
-                  <th key={column.key}>
-                    <button type="button" className={styles.sortButton} onClick={() => toggleSort(column.key)}>
-                      {column.label}
-                      {sort.key === column.key ? (sort.direction === 'asc' ? ' ▲' : ' ▼') : ''}
-                    </button>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((booth) => {
-                const isExpanded = expandedBoothId === booth.id;
+        <>
+          <div className={styles.tableScroll}>
+            <table className={styles.table}>
+              <colgroup>
+                <col className={styles.colExpand} />
+                <col className={styles.colNumber} />
+                <col className={styles.colName} />
+                <col className={styles.colLocation} />
+                <col className={styles.colNumeric} />
+                <col className={styles.colNumeric} />
+                <col className={styles.colNumeric} />
+                <col className={styles.colLeading} />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th aria-hidden="true" />
+                  {COLUMNS.map((column) => (
+                    <th key={column.key}>
+                      <button type="button" className={styles.sortButton} onClick={() => toggleSort(column.key)}>
+                        {column.label}
+                        {sort.key === column.key ? (sort.direction === 'asc' ? ' ▲' : ' ▼') : ''}
+                      </button>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {paginated.map((booth) => {
+                  const isExpanded = expandedBoothId === booth.id;
 
-                return (
-                  <Fragment key={booth.id}>
-                    <tr
-                      className={styles.row}
-                      onClick={() => toggleExpanded(booth.id)}
-                      aria-expanded={isExpanded}
-                    >
-                      <td className={styles.expandCell}>
-                        <button
-                          type="button"
-                          className={styles.expandButton}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleExpanded(booth.id);
-                          }}
-                          aria-label={isExpanded ? 'Collapse candidate breakdown' : 'Expand candidate breakdown'}
-                        >
-                          {isExpanded ? '▾' : '▸'}
-                        </button>
-                      </td>
-                      <td>{booth.number}</td>
-                      <td>{booth.name}</td>
-                      <td>{booth.location}</td>
-                      <td>{booth.registeredVoters.toLocaleString()}</td>
-                      <td>{booth.totalVotesCast.toLocaleString()}</td>
-                      <td>{booth.turnoutPercentage}%</td>
-                      <td>
-                        {booth.leadingCandidate.name} ({booth.leadingCandidate.party}) —{' '}
-                        {booth.leadingCandidate.votes.toLocaleString()}
-                      </td>
-                    </tr>
-                    {isExpanded && (
-                      <tr className={styles.detailRow}>
-                        <td colSpan={TOTAL_COLUMN_COUNT}>
-                          <CandidateRanking candidates={booth.candidates} />
+                  return (
+                    <Fragment key={booth.id}>
+                      <tr
+                        className={styles.row}
+                        onClick={() => toggleExpanded(booth.id)}
+                        aria-expanded={isExpanded}
+                      >
+                        <td className={styles.expandCell}>
+                          <button
+                            type="button"
+                            className={styles.expandButton}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              toggleExpanded(booth.id);
+                            }}
+                            aria-label={isExpanded ? 'Collapse candidate breakdown' : 'Expand candidate breakdown'}
+                          >
+                            {isExpanded ? '▾' : '▸'}
+                          </button>
+                        </td>
+                        <td className={styles.numeric}>{booth.number}</td>
+                        <td className={styles.nameCell} title={booth.name}>
+                          {booth.name}
+                        </td>
+                        <td className={styles.locationCell} title={booth.location}>
+                          {booth.location}
+                        </td>
+                        <td className={styles.numeric}>{formatNumber(booth.registeredVoters)}</td>
+                        <td className={styles.numeric}>{formatNumber(booth.totalVotesCast)}</td>
+                        <td className={styles.numeric}>{booth.turnoutPercentage}%</td>
+                        <td className={styles.leadingCell} title={partyLabel(booth.leadingCandidate.party)}>
+                          <span className={styles.leadingBadge}>{booth.leadingCandidate.name}</span>
+                          <span className={styles.leadingVotes}>{formatNumber(booth.leadingCandidate.votes)}</span>
                         </td>
                       </tr>
-                    )}
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      {isExpanded && (
+                        <tr className={styles.detailRow}>
+                          <td colSpan={TOTAL_COLUMN_COUNT}>
+                            <CandidateRanking candidates={booth.candidates} />
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {pageCount > 1 && (
+            <div className={styles.pagination}>
+              <button
+                type="button"
+                className={styles.pageButton}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </button>
+              <span className={styles.pageStatus}>
+                Page {page} of {pageCount} · {sorted.length} booths
+              </span>
+              <button
+                type="button"
+                className={styles.pageButton}
+                onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                disabled={page === pageCount}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

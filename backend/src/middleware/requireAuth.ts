@@ -4,6 +4,12 @@ import { UnauthorizedError } from '../errors';
 import { AUTH_COOKIE_NAME } from '../services/authCookie';
 import { verifyToken } from '../services/auth.service';
 
+function extractBearerToken(req: Request): string | undefined {
+  const header = req.header('Authorization');
+  if (!header?.startsWith('Bearer ')) return undefined;
+  return header.slice('Bearer '.length);
+}
+
 export function requireAuth(req: Request, _res: Response, next: NextFunction): void {
   const apiKey = req.header('X-API-Key');
   if (apiKey && apiKey === env.MOBILE_API_KEY) {
@@ -12,7 +18,7 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
     return;
   }
 
-  const token = req.cookies?.[AUTH_COOKIE_NAME] as string | undefined;
+  const token = extractBearerToken(req) ?? (req.cookies?.[AUTH_COOKIE_NAME] as string | undefined);
   if (!token) {
     next(new UnauthorizedError());
     return;

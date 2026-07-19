@@ -2,6 +2,7 @@ import type { BoothDetail } from '../types/booth';
 import { CandidateRanking } from './CandidateRanking';
 import { ErrorState } from './ErrorState';
 import { LoadingState } from './LoadingState';
+import { formatNumber } from '../utils/format';
 import styles from './BoothDetailPanel.module.css';
 
 interface BoothDetailPanelProps {
@@ -36,11 +37,11 @@ export function BoothDetailPanel({ booth, loading, error, onClose }: BoothDetail
 
           <div className={styles.stats}>
             <div className={styles.stat}>
-              <span className={styles.statValue}>{booth.registeredVoters.toLocaleString()}</span>
+              <span className={styles.statValue}>{formatNumber(booth.registeredVoters)}</span>
               <span className={styles.statLabel}>Registered</span>
             </div>
             <div className={styles.stat}>
-              <span className={styles.statValue}>{booth.totalVotesCast.toLocaleString()}</span>
+              <span className={styles.statValue}>{formatNumber(booth.totalVotesCast)}</span>
               <span className={styles.statLabel}>Votes Cast</span>
             </div>
             <div className={styles.stat}>

@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, fontSize, radius, spacing } from '../theme';
 
 interface ErrorStateProps {
   message: string;
@@ -14,15 +15,15 @@ export function ErrorState({ message }: ErrorStateProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#fdecec',
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    backgroundColor: colors.errorBg,
     borderWidth: 1,
-    borderColor: '#f3c1bd',
+    borderColor: colors.errorBorder,
   },
   message: {
-    color: '#b3261e',
-    fontSize: 14,
+    color: colors.errorText,
+    fontSize: fontSize.base,
     textAlign: 'center',
   },
 });

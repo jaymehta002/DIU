@@ -1,4 +1,6 @@
 import type { Candidate } from '../types/candidate';
+import { partyLabel } from '../utils/party';
+import { formatNumber } from '../utils/format';
 import styles from './CandidateRanking.module.css';
 
 interface CandidateRankingProps {
@@ -20,9 +22,9 @@ export function CandidateRanking({ candidates }: CandidateRankingProps) {
         <li key={candidate.id} className={index === 0 ? styles.leading : styles.item}>
           <span className={styles.rank}>{rankLabel(index)}</span>
           <span className={styles.name}>
-            {candidate.name} <span className={styles.party}>({candidate.party})</span>
+            {candidate.name} <span className={styles.party}>({partyLabel(candidate.party)})</span>
           </span>
-          <span className={styles.votes}>{candidate.votes.toLocaleString()}</span>
+          <span className={styles.votes}>{formatNumber(candidate.votes)}</span>
         </li>
       ))}
     </ol>

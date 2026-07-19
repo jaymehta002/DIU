@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import type { BoothSearchResult } from '../types/booth';
+import { colors, fontSize, fontWeight, radius, spacing } from '../theme';
 
 interface BoothListItemProps {
   booth: BoothSearchResult;
@@ -23,23 +24,23 @@ export function BoothListItem({ booth, onPress }: BoothListItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 14,
-    borderRadius: 8,
+    padding: spacing.lg,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#e0e1e6',
-    backgroundColor: '#ffffff',
-    gap: 4,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    gap: spacing.xs,
   },
   pressed: {
-    backgroundColor: '#f0f1f4',
+    backgroundColor: colors.surfaceAlt,
   },
   name: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1c1d21',
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
   },
   meta: {
-    fontSize: 13,
-    color: '#6b6c76',
+    fontSize: fontSize.sm,
+    color: colors.textMuted,
   },
 });
