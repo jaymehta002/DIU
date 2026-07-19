@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Constituency {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+
+  booths     Booth[]
+  candidates Candidate[]
+}
+
+model Booth {
+  id               String   @id @default(cuid())
+  name             String
+  number           Int
+  location         String
+  registeredVoters Int
+  constituencyId   String
+  createdAt        DateTime @default(now())
+
+  constituency Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
+  voteRecords  VoteRecord[]
+
+  @@unique([constituencyId, number])
+  @@index([constituencyId])
+}
+
+model Candidate {
+  id             String   @id @default(cuid())
+  name           String
+  party          String
+  constituencyId String
+  createdAt      DateTime @default(now())
+
+  constituency Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
+  voteRecords  VoteRecord[]
+
+  @@index([constituencyId])
+}
+
+model VoteRecord {
+  id          String   @id @default(cuid())
+  votes       Int
+  boothId     String
+  candidateId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  booth     Booth     @relation(fields: [boothId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([boothId, candidateId])
+  @@index([boothId])
+  @@index([candidateId])
+}
