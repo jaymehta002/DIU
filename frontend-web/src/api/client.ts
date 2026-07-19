@@ -22,7 +22,16 @@ function isApiErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
   );
 }
 
-export async function apiRequest<T>(path: string, searchParams?: Record<string, string>): Promise<T> {
+interface ApiRequestOptions {
+  method?: 'GET' | 'POST';
+  body?: unknown;
+}
+
+export async function apiRequest<T>(
+  path: string,
+  searchParams?: Record<string, string>,
+  options?: ApiRequestOptions,
+): Promise<T> {
   const url = new URL(`${API_URL}${path}`);
   if (searchParams) {
     for (const [key, value] of Object.entries(searchParams)) {
@@ -32,9 +41,18 @@ export async function apiRequest<T>(path: string, searchParams?: Record<string, 
 
   let response: Response;
   try {
-    response = await fetch(url.toString());
+    response = await fetch(url.toString(), {
+      method: options?.method ?? 'GET',
+      credentials: 'include',
+      headers: options?.body ? { 'Content-Type': 'application/json' } : undefined,
+      body: options?.body ? JSON.stringify(options.body) : undefined,
+    });
   } catch {
     throw new ApiRequestError('Unable to reach the server. Check your connection.', 'NETWORK_ERROR', 0);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   let body: unknown;

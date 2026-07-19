@@ -24,16 +24,35 @@ npm run dev      # http://localhost:5173, requires the backend already running
 The backend must be up first (`cd ../backend && npm run dev`) — without it every section shows the
 "Unable to reach the server" error state rather than data.
 
+## Logging in
+
+This app requires a login — see [`backend/README.md#authentication`](../backend/README.md#authentication)
+for the full design rationale. Demo credentials (seeded by `backend/prisma/seed.ts`):
+
+| Username | Password |
+|---|---|
+| `analyst` | `AnalystDemo123!` |
+| `admin` | `AdminDemo123!` |
+
+The session is an httpOnly cookie set by `POST /api/auth/login` — every `fetch` in `src/api/client.ts`
+sends `credentials: 'include'` so it's attached automatically. Use the "Sign out" button in the
+dashboard header to clear it (`POST /api/auth/logout`).
+
 ## Project structure
 
-- `src/api/` — typed fetch client (`client.ts`) + one function per endpoint used here
+- `src/api/` — typed fetch client (`client.ts`, sends cookies + supports POST/JSON bodies) + one
+  function per endpoint used here, including `auth.ts`
+- `src/context/` — `AuthProvider` (checks `GET /api/auth/me` on load, exposes login/logout) +
+  the underlying `AuthContext`
 - `src/types/` — `Booth`, `Candidate`, etc., mirrored exactly from `backend/API.md` and
   `mobile/src/types/` — do not let these drift
-- `src/hooks/` — `useConstituencies`, `useConstituencyBooths`, `useBoothSearch`, wrapping `api/`
-  with loading/error state
-- `src/components/` — `ConstituencySelector`, `BoothTable` (sortable + filterable), `CandidateVotesChart`
-  (recharts bar chart), `SearchBar`, `BoothSearchResults`, and shared `LoadingState`/`ErrorState`/`EmptyState`
-- `Dashboard.tsx` — top-level layout composing the above; `App.tsx` just renders it
+- `src/hooks/` — `useConstituencies`, `useConstituencyBooths`, `useBoothSearch`, `useAuth`, wrapping
+  `api/` with loading/error state
+- `src/components/` — `LoginForm`, `ConstituencySelector`, `BoothTable` (sortable + filterable),
+  `CandidateVotesChart` (recharts bar chart), `SearchBar`, `BoothSearchResults`, `BoothDetailPanel`,
+  and shared `LoadingState`/`ErrorState`/`EmptyState`
+- `App.tsx` — gates on auth status: loading spinner, `LoginForm`, or `Dashboard`
+- `Dashboard.tsx` — top-level authenticated layout composing the above
 
 ## Build
 

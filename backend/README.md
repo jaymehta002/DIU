@@ -39,10 +39,9 @@ The analytics dashboard (`frontend-web`) requires a login; the mobile field-staf
 (see [Mobile access](#mobile-access)). Full endpoint-level detail — request/response shapes, all
 error cases — is in [`API.md`](API.md#authentication); this section covers the design choices.
 
-**Backend-only so far.** This pass added the schema, endpoints, and route protection on the
-API side; `frontend-web` does not yet have a login screen or `credentials: 'include'` wired into
-its `fetch` calls, so as of this change the dashboard will get `401`s from every request until
-that frontend work is done as a follow-up.
+`frontend-web` has a login screen wired to these endpoints — see
+[`frontend-web/README.md#logging-in`](../frontend-web/README.md#logging-in) for the demo
+credentials and how the session cookie flows through its `fetch` client.
 
 **Demo login credentials** (from `prisma/seed.ts`, re-created on every `npx prisma db seed`):
 

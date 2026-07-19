@@ -12,6 +12,7 @@ import { useConstituencies } from './hooks/useConstituencies';
 import { useConstituencyBooths } from './hooks/useConstituencyBooths';
 import { useBoothSearch } from './hooks/useBoothSearch';
 import { useBooth } from './hooks/useBooth';
+import { useAuth } from './hooks/useAuth';
 import styles from './Dashboard.module.css';
 
 export function Dashboard() {
@@ -21,12 +22,21 @@ export function Dashboard() {
   const constituencyBooths = useConstituencyBooths(selectedConstituencyId);
   const search = useBoothSearch();
   const selectedBooth = useBooth(selectedBoothId);
+  const { user, logout } = useAuth();
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1>Election Dashboard</h1>
-        <p className={styles.subtitle}>Constituency and booth-level results</p>
+        <div>
+          <h1>Election Dashboard</h1>
+          <p className={styles.subtitle}>Constituency and booth-level results</p>
+        </div>
+        <div className={styles.headerActions}>
+          {user && <span className={styles.username}>{user.username}</span>}
+          <button type="button" className={styles.logoutButton} onClick={() => void logout()}>
+            Sign out
+          </button>
+        </div>
       </header>
 
       <section className={styles.card}>
