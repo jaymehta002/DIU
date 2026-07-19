@@ -67,10 +67,6 @@ from you.
 
 ## Known gaps / things to be aware of
 
-- **No git repo** at the root of this project — `backend/`, `frontend-web/`, and `mobile/` are not
-  currently tracked as one connected repo (`mobile/` has its own local git init from
-  `create-expo-app`; the others don't have git at all). If you want version control across all
-  three, that's a manual decision — Claude won't set that up unasked.
 - **No iOS Simulator / Android emulator** on this machine — mobile verification depends on your
   physical device via Expo Go until one of those is installed.
 - **Ports in use by this project**: `5432` (Postgres), `3000` (backend API), `5173` (web dev
