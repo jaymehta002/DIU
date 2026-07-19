@@ -49,6 +49,7 @@ credentials and how the session cookie flows through its `fetch` client.
 |---|---|
 | `analyst` | `AnalystDemo123!` |
 | `admin` | `AdminDemo123!` |
+| `user01@gmail.com` | `User01@123` |
 
 These are seed-only demo accounts for a local/demo dataset — never reuse this pattern for
 real credentials.

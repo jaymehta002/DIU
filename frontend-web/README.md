@@ -33,6 +33,7 @@ for the full design rationale. Demo credentials (seeded by `backend/prisma/seed.
 |---|---|
 | `analyst` | `AnalystDemo123!` |
 | `admin` | `AdminDemo123!` |
+| `user01@gmail.com` | `User01@123` |
 
 The session is an httpOnly cookie set by `POST /api/auth/login` — every `fetch` in `src/api/client.ts`
 sends `credentials: 'include'` so it's attached automatically. Use the "Sign out" button in the

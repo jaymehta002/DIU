@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 const DEMO_USERS = [
   { username: 'analyst', password: 'AnalystDemo123!' },
   { username: 'admin', password: 'AdminDemo123!' },
+  { username: 'user01@gmail.com', password: 'User01@123' },
 ];
 
 const PARTY_POOL = [
