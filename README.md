@@ -36,6 +36,18 @@ mobile app runs on a separate device (phone or emulator), so it **must** use the
 LAN IP instead — see [`mobile/.env.example`](mobile/.env.example) and
 [`SETUP.md`](SETUP.md) for why this trips people up.
 
+## Demo login
+
+The web dashboard requires a login (mobile does not — see
+[`backend/README.md#authentication`](backend/README.md#authentication) for why). Demo accounts,
+seeded by `backend/prisma/seed.ts`:
+
+| Username | Password |
+|---|---|
+| `analyst` | `AnalystDemo123!` |
+| `admin` | `AdminDemo123!` |
+| `user01@gmail.com` | `User01@123` |
+
 ## Screenshots
 
 Evidence that each piece runs — backend endpoints, web dashboard, mobile app on-device — lives in
