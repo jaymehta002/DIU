@@ -146,8 +146,20 @@ accounts.
 
 ## Screenshots
 
-Evidence that each piece runs — backend endpoints, web dashboard, mobile app on-device — lives in
-[`docs/screenshots/`](docs/screenshots/), one subfolder per component.
+Evidence that each piece runs lives in [`screenshots/`](screenshots/), one subfolder per
+component. Filenames don't matter — drop images (or a short screen recording) directly in the
+matching folder.
+
+- **[`screenshots/backend/`](screenshots/backend/)** — the `curl` calls from `backend/API.md`
+  (or a REST client) hitting a few endpoints: `POST /api/auth/login`, `GET /api/constituencies`,
+  `GET /api/constituencies/:id/booths`, and one deliberate error case (bad id → 404, missing/bad
+  token → 401).
+- **[`screenshots/web/`](screenshots/web/)** — the login screen, the Overview page (stat tiles +
+  charts), a constituency detail page (booth table + candidate chart), and a booth row showing the
+  leading-candidate/party-badge styling.
+- **[`screenshots/mobile/`](screenshots/mobile/)** — the login screen, the search screen with
+  results, and the booth detail screen showing the candidate breakdown with party badges (a
+  party-affiliated candidate and an independent one).
 
 ## Where to start
 
