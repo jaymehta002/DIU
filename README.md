@@ -33,8 +33,8 @@ the same response envelope and type shapes, documented once in [`backend/API.md`
 
 The web app runs in a browser on the same machine as the backend, so it talks to `localhost`. The
 mobile app runs on a separate device (phone or emulator), so it **must** use the backend machine's
-LAN IP instead — see [`mobile/.env.example`](mobile/.env.example) and
-[`SETUP.md`](SETUP.md) for why this trips people up.
+LAN IP instead — see [Environment variables](#environment-variables) below for why this trips
+people up.
 
 ## Environment variables
 
@@ -144,34 +144,28 @@ its session). Demo accounts, seeded by `backend/prisma/seed.ts`:
 These are seed-only fake credentials for this assignment — never reuse this pattern for real
 accounts.
 
-## Screenshots
-
-Evidence that each piece runs lives in [`screenshots/`](screenshots/), one subfolder per
-component. Filenames don't matter — drop images (or a short screen recording) directly in the
-matching folder.
-
-- **[`screenshots/backend/`](screenshots/backend/)** — the `curl` calls from `backend/API.md`
-  (or a REST client) hitting a few endpoints: `POST /api/auth/login`, `GET /api/constituencies`,
-  `GET /api/constituencies/:id/booths`, and one deliberate error case (bad id → 404, missing/bad
-  token → 401).
-- **[`screenshots/web/`](screenshots/web/)** — the login screen, the Overview page (stat tiles +
-  charts), a constituency detail page (booth table + candidate chart), and a booth row showing the
-  leading-candidate/party-badge styling.
-- **[`screenshots/mobile/`](screenshots/mobile/)** — the login screen, the search screen with
-  results, and the booth detail screen showing the candidate breakdown with party badges (a
-  party-affiliated candidate and an independent one).
-
 ## Where to start
 
 The [Setup](#setup) section above is everything you need to get all three components running.
-[`SETUP.md`](SETUP.md) has the same steps as a checklist plus a troubleshooting table, if you'd
-rather work through it that way.
-
 Each subproject also has its own docs:
 
 - [`backend/API.md`](backend/API.md) — full endpoint reference (request/response shapes, error cases)
 - [`frontend-web/README.md`](frontend-web/README.md)
 - [`mobile/README.md`](mobile/README.md) — includes the LAN IP setup note in detail
+
+### Screenshots
+
+Evidence that each piece actually runs:
+
+- **Backend** — the `curl` calls from `backend/API.md` (or a REST client) hitting a few
+  endpoints: `POST /api/auth/login`, `GET /api/constituencies`, `GET /api/constituencies/:id/booths`,
+  and one deliberate error case (bad id → 404, missing/bad token → 401).
+- **Web** — the login screen, the Overview page (stat tiles + charts), a constituency detail page
+  (booth table + candidate chart), and a booth row showing the leading-candidate/party-badge
+  styling.
+- **Mobile** — the login screen, the search screen with results, and the booth detail screen
+  showing the candidate breakdown with party badges (a party-affiliated candidate and an
+  independent one).
 
 ## Trade-offs made due to time
 
